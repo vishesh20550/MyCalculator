@@ -43,12 +43,18 @@ class MainActivity : AppCompatActivity() {
     fun onOperatorClicked(view : View){
 
         if(!isOperatorActive){
+            val operator = (view as Button).text
+            if(textView?.text==null && textView?.text!!.isEmpty()){
+                if(operator== "-"){
+                    textView?.append("(-)");
+                }
+                return;
+            }
             if(textView?.text.toString()[textView?.text!!.length-1] == '.'){
                 Toast.makeText(this, "'.' should not be in the end",Toast.LENGTH_SHORT).show();
                 return
             }
             isOperatorActive = true
-            val operator = (view as Button).text
             if(operator.equals("=") ){
                 if(textView?.text==null || textView?.text!!.isEmpty()){
                     Toast.makeText(this, "No input provided :^",Toast.LENGTH_SHORT).show();
@@ -59,6 +65,26 @@ class MainActivity : AppCompatActivity() {
                 textView?.append(operator);
             }
             isDecimalActive = false
+        }else{
+            if((view as Button).text.equals("-")){
+                if (textView?.text?.get(textView?.text!!.length - 1)?.equals('+') == true) {
+                    onDelClicked(view)
+                    textView?.append("-");
+                    isOperatorActive=true;
+                }else if(textView?.text?.get(textView?.text!!.length - 1)?.equals('-') == true){
+                    onDelClicked(view)
+                    textView?.append("+");
+                    isOperatorActive=true;
+                }else if(textView?.text?.get(textView?.text!!.length - 1)?.equals('*') == true || textView?.text?.get(textView?.text!!.length - 1)?.equals('/') == true){
+                    textView?.append("(-)")
+                }
+            }else if((view as Button).text.equals("+")){
+                if (textView?.text?.get(textView?.text!!.length - 1)?.equals('-') == true) {
+                    onDelClicked(view)
+                    textView?.append("-");
+                    isOperatorActive=true;
+                }
+            }
         }
     }
     private fun printOutput(){
@@ -75,7 +101,13 @@ class MainActivity : AppCompatActivity() {
                 isOperatorActive=false;
             val str = StringBuilder(textView?.text.toString())
             if(str[str.length-1] == '.'){
+                if(str[str.length-2] == '0'){
+                    str.deleteCharAt(str.length-1)
+                }
                 isDecimalActive=false;
+            }else if(str[str.length-1] == ')'){
+                str.deleteCharAt(str.length - 1);
+                str.deleteCharAt(str.length - 1);
             }
             str.deleteCharAt(str.length - 1)
             if(str.isNotEmpty()){
