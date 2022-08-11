@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     }
     fun onDigitClick(view: View){
         var str =(view as Button).text
-        if(str.equals("0") && (textView?.text==null || textView?.text!!.isEmpty() || textView?.text?.get(textView?.text!!.length-1)?.equals('0') == true)){
+        if(str.equals("0") && (textView?.text==null || textView?.text!!.isEmpty())){
             return
         }
         if(str.equals(".") ){
@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             isOperatorActive = false
         }
     }
-    fun onClearClick() {
+    fun onClearClick(view: View) {
         textView?.text = ""
         isOperatorActive=false
         isDecimalActive=false
@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     fun onOperatorClicked(view : View){
         val operator = (view as Button).text
         if(!isOperatorActive){
-            if(textView?.text==null || textView?.text == ""){
+            if(textView?.text==null || textView?.text!!.isEmpty()){
                 if(operator== "-"){
                     textView?.append("(-)")
                 }
@@ -68,11 +68,11 @@ class MainActivity : AppCompatActivity() {
         }else{
             if(operator.equals("-")){
                 if (textView?.text?.get(textView?.text!!.length - 1)?.equals('+') == true) {
-                    onDelClicked()
+                    onDelClicked(view)
                     textView?.append("-")
                     isOperatorActive=true
                 }else if(textView?.text?.get(textView?.text!!.length - 1)?.equals('-') == true){
-                    onDelClicked()
+                    onDelClicked(view)
                     textView?.append("+")
                     isOperatorActive=true
                 }else if(textView?.text?.get(textView?.text!!.length - 1)?.equals('*') == true || textView?.text?.get(textView?.text!!.length - 1)?.equals('/') == true){
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }else if(operator.equals("+")){
                 if (textView?.text?.get(textView?.text!!.length - 1)?.equals('-') == true) {
-                    onDelClicked()
+                    onDelClicked(view)
                     textView?.append("-")
                     isOperatorActive=true
                 }
@@ -104,6 +104,11 @@ class MainActivity : AppCompatActivity() {
                         isNegative = true
                         i+=3
                         start=i
+                        if(i>str.length-1) {
+                            Toast.makeText(this, "Add some value :P",Toast.LENGTH_SHORT).show()
+                            isOperatorActive=false
+                            return
+                        }
                     }
 
                     if(str[i] == '+' || str[i] == '*' ||str[i] == '/' ||str[i] == '-' || i==str.length-1){
@@ -139,7 +144,6 @@ class MainActivity : AppCompatActivity() {
                                if(num1Double== Double.POSITIVE_INFINITY || num1Double== Double.NEGATIVE_INFINITY){
                                    Toast.makeText(this, "Infinity >>>>>",Toast.LENGTH_SHORT).show()
                                    textView?.text =""
-                                   isDecimalActive=true
                                    isOperatorActive=false
                                    return
                                }
@@ -162,10 +166,10 @@ class MainActivity : AppCompatActivity() {
                     }
                     i++
                 }
+                isOperatorActive=false
             }catch (e  : ArithmeticException){
                 Toast.makeText(this, "Wrong Calculation parameters (eg. divide by zero)",Toast.LENGTH_SHORT).show()
                 textView?.text =""
-                isDecimalActive=true
                 isOperatorActive=false
                 e.printStackTrace()
                 return
@@ -173,7 +177,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    fun onDelClicked() {
+    fun onDelClicked(view : View) {
         if(textView?.text!=null && textView?.text!!.isNotEmpty()){
             if (isOperatorActive)
                 isOperatorActive=false
